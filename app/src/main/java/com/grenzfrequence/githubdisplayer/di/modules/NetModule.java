@@ -1,13 +1,13 @@
-package com.grenzfrequence.githubdisplayer.webservice;
+package com.grenzfrequence.githubdisplayer.di.modules;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
 import android.support.compat.BuildConfig;
 
+import com.grenzfrequence.githubdisplayer.di.scopes.ApplicationScope;
 import com.grenzfrequence.githubdisplayer.utils.UrlReference;
+import com.grenzfrequence.githubdisplayer.webservice.MyAdapterFactory;
 import com.squareup.moshi.Moshi;
-
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -33,15 +33,16 @@ public class NetModule {
         this.maxCacheSize = maxCacheSize;
     }
 
-    @NonNull
-    @Singleton
     @Provides
+    @ApplicationScope
+    @NonNull
     public UrlReference provideUrlReference() {
         return baseUrlReference;
     }
 
-    @Singleton
     @Provides
+    @ApplicationScope
+    @NonNull
     Retrofit provideRetrofit(Moshi moshi, OkHttpClient client) {
         return new Retrofit.Builder()
                 .baseUrl(baseUrlReference.url())
@@ -52,8 +53,9 @@ public class NetModule {
                 .build();
     }
 
-    @Singleton
     @Provides
+    @ApplicationScope
+    @NonNull
     Moshi provideMoshi() {
         return new Moshi
                 .Builder()
@@ -61,8 +63,9 @@ public class NetModule {
                 .build();
     }
 
-    @Singleton
     @Provides
+    @ApplicationScope
+    @NonNull
     OkHttpClient provideClient(Cache cache, HttpLoggingInterceptor httpLoggingInterceptor) {
 
         return new OkHttpClient.Builder()
@@ -71,14 +74,16 @@ public class NetModule {
                 .build();
     }
 
-    @Singleton
     @Provides
+    @ApplicationScope
+    @NonNull
     Cache provideCache(Application application) {
         return new Cache(application.getCacheDir(), maxCacheSize);
     }
 
-    @Singleton
     @Provides
+    @ApplicationScope
+    @NonNull
     HttpLoggingInterceptor provideHttpLoggingInterceptor() {
         return (new HttpLoggingInterceptor()).setLevel(HttpLoggingInterceptor.Level.BODY);
     }

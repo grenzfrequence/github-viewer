@@ -3,7 +3,6 @@ package com.grenzfrequence.githubdisplayer.repolist;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
-import com.android.databinding.library.baseAdapters.BR;
 import com.grenzfrequence.githubdisplayer.repolist.data.RepoListItem;
 import com.grenzfrequence.githubdisplayer.repolist.data.RepoListModel;
 
@@ -26,8 +25,7 @@ public class RepoListItemViewModel extends BaseObservable {
 
     public void setRepoListItem(RepoListItem repoListItem) {
         this.repoListItem = repoListItem;
-        notifyPropertyChanged(BR.repoName);
-//        notifyChange();
+        notifyChange();
     }
 
     @Bindable

@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by grenzfrequence on 04/03/17.
  */
-public class RepoListAdapter extends RecyclerView.Adapter<RepoListItemHolder> {
+public class RepoListAdapter extends RecyclerView.Adapter<RepoListItemViewHolder> {
 
     private List<RepoListItem> repoListItems;
 
@@ -22,15 +22,16 @@ public class RepoListAdapter extends RecyclerView.Adapter<RepoListItemHolder> {
     }
 
     @Override
-    public RepoListItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RepoListItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-             .inflate(R.layout.repo_list_item, null, false);
-        return new RepoListItemHolder(view);
+                                  .inflate(R.layout.repo_list_item, null, false);
+        return new RepoListItemViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(RepoListItemHolder holder, int position) {
-        holder.setData(repoListItems.get(position));
+    public void onBindViewHolder(RepoListItemViewHolder holder, int position) {
+        holder.getViewModel().setRepoListItem(repoListItems.get(position));
+        holder.executePendingBindings();
     }
 
     @Override

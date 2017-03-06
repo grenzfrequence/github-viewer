@@ -1,8 +1,8 @@
-package com.grenzfrequence.githubdisplayer.di;
+package com.grenzfrequence.githubdisplayer.di.modules;
 
 import android.app.Application;
 
-import javax.inject.Singleton;
+import com.grenzfrequence.githubdisplayer.di.scopes.ApplicationScope;
 
 import dagger.Module;
 import dagger.Provides;
@@ -12,15 +12,15 @@ import dagger.Provides;
  */
 
 @Module
-public class ApplicationModule {
+public class AppModule {
     Application application;
 
-    public ApplicationModule(Application application) {
+    public AppModule(Application application) {
         this.application = application;
     }
 
-    @Singleton
     @Provides
+    @ApplicationScope
     Application provideApplication() {
         return application;
     }

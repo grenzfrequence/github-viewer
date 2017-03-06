@@ -1,8 +1,8 @@
-package com.grenzfrequence.githubdisplayer.repolist.di;
+package com.grenzfrequence.githubdisplayer.di.modules;
 
 import android.support.annotation.NonNull;
 
-import com.grenzfrequence.githubdisplayer.di.ActivityScope;
+import com.grenzfrequence.githubdisplayer.di.scopes.ViewHolderScope;
 import com.grenzfrequence.githubdisplayer.repolist.data.RepoListService;
 
 import dagger.Module;
@@ -10,14 +10,18 @@ import dagger.Provides;
 import retrofit2.Retrofit;
 
 /**
- * Created by grenzfrequence on 03/03/17.
+ * Created by grenzfrequence on 06/03/17.
  */
 
 @Module
-@ActivityScope
-public class RepoListItemViewHolderModule {
+public class ViewModelModul {
+
+    //
+    // ViewHolders
+    //
 
     @Provides
+    @ViewHolderScope
     @NonNull
     RepoListService provideRepoListService(@NonNull Retrofit retrofit) {
         return retrofit.create(RepoListService.class);
