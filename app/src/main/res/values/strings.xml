@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">GithubDisplayer</string>
+
+    <string name="list_not_available">list not available</string>
+</resources>

@@ -1,0 +1,76 @@
+ext.application = [
+        applicationId: "com.grenzfrequence.githubdisplayer",
+]
+
+ext.versions = [
+        gradle           : '2.2.3',
+        libVersionChecker: '0.14.0',
+
+        support          : '25.1.0',
+
+        autoValue        : '1.4-rc2',
+        autoValueMoshi   : '0.4.3',
+        autoValueParcel  : '0.2.5',
+        butterknife      : '8.5.1',
+
+        retrofit         : '2.1.0',
+        moshi            : '1.4.0',
+        okHttp           : '3.6.0',
+
+        dagger           : '2.8',
+
+        junit            : '4.12',
+        espresso         : '2.2.2',
+]
+
+ext.gradlePlugins = [
+        gradle           : "com.android.tools.build:gradle:$versions.gradle",
+        libVersionChecker: "com.github.ben-manes:gradle-versions-plugin:$versions.libVersionChecker",
+]
+
+ext.libraries = [
+        appCompat                : "com.android.support:appcompat-v7:$versions.support",
+        recyclerView             : "com.android.support:recyclerview-v7:$versions.support",
+
+        autoValue                : "com.google.auto.value:auto-value:$versions.autoValue",
+        autoValueMoshi           : "com.ryanharter.auto.value:auto-value-moshi:$versions.autoValueMoshi",
+        autoValueMoshiAnnotations: "com.ryanharter.auto.value:auto-value-moshi-annotations:$versions.autoValueMoshi",
+        autoValueParcel          : "com.ryanharter.auto.value:auto-value-parcel:$versions.autoValueParcel",
+        autoValueParcelAdapter   : "com.ryanharter.auto.value:auto-value-parcel-adapter:$versions.autoValueParcel",
+
+        butterknife              : "com.jakewharton:butterknife:$versions.butterknife",
+        butterknifeCompiler      : "com.jakewharton:butterknife-compiler:$versions.butterknife",
+
+        dagger                   : "com.google.dagger:dagger:$versions.dagger",
+        daggerCompiler           : "com.google.dagger:dagger-compiler:$versions.dagger",
+        javaxAnnotation          : "org.glassfish:javax.annotation:$versions.javaxAnnotation",
+
+        okHttp                   : "com.squareup.okhttp3:okhttp:$versions.okHttp",
+        retrofit                 : "com.squareup.retrofit2:retrofit:$versions.retrofit",
+        retrofitRxAdapter        : "com.squareup.retrofit2:adapter-rxjava:$versions.retrofit",
+        MoshiConverter           : "com.squareup.retrofit2:converter-moshi:$versions.retrofit",
+        Moshi                    : "com.squareup.moshi:moshi:$versions.moshi",
+        LoggingInterceptor       : "com.squareup.okhttp3:logging-interceptor:$versions.okHttp",
+
+
+        junit                    : "junit:junit:$versions.junit",
+        espresso                 : "com.android.support.test.espresso:espresso-core:$versions.espresso",
+        junitrunner              : "android.support.test.runner.AndroidJUnitRunner",
+]
+
+ext.proguard = [
+        declarations: 'proguard-android.txt',
+        rules       : 'proguard-rules.pro'
+]
+
+//
+// exclude parts
+//
+
+ext.groups = [
+        androidsupport: 'com.android.support',
+]
+
+ext.modul = [
+        supportannotations: 'support-annotations',
+]

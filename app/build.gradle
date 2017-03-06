@@ -1,0 +1,62 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId application.applicationId
+        minSdkVersion 19
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner libraries.junitrunner
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile(
+                    proguard.declarations),
+                    proguard.rules
+        }
+    }
+
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile(libraries.espresso, {
+        exclude group: groups.androidsupport, module: modul.supportannotations
+    })
+    compile libraries.appCompat
+    compile libraries.recyclerView
+
+    // Autovalue and extensions
+    provided libraries.autoValue
+    annotationProcessor libraries.autoValue
+    provided libraries.autoValueMoshiAnnotations
+    annotationProcessor libraries.autoValueMoshi
+    compile libraries.autoValueParcelAdapter
+    annotationProcessor libraries.autoValueParcel
+
+    // ButterKnife
+    compile libraries.butterknife
+    annotationProcessor libraries.butterknifeCompiler
+
+    // Dagger
+    compile libraries.dagger
+    annotationProcessor libraries.daggerCompiler
+
+    // Retrofit
+    compile libraries.okHttp
+    compile libraries.retrofit
+    compile libraries.retrofitRxAdapter
+    compile libraries.MoshiConverter
+    compile libraries.Moshi
+    compile libraries.LoggingInterceptor
+
+
+    testCompile libraries.junit
+}
