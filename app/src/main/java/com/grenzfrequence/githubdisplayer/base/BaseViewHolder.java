@@ -6,11 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.android.databinding.library.baseAdapters.BR;
-import com.grenzfrequence.githubdisplayer.Application;
-import com.grenzfrequence.githubdisplayer.di.components.AppComponent;
 import com.grenzfrequence.githubdisplayer.di.components.DaggerViewHolderComponent;
 import com.grenzfrequence.githubdisplayer.di.components.ViewHolderComponent;
-import com.grenzfrequence.githubdisplayer.di.modules.ViewModelModul;
 import com.grenzfrequence.githubdisplayer.di.scopes.ViewHolderScope;
 
 import javax.inject.Inject;
@@ -20,7 +17,7 @@ import javax.inject.Inject;
  */
 
 @ViewHolderScope
-public class ViewHolder<VIEWMODEL, BINDING extends ViewDataBinding>
+public class BaseViewHolder<VIEWMODEL, BINDING extends ViewDataBinding>
         extends RecyclerView.ViewHolder {
 
     private ViewHolderComponent viewHolderComponent;
@@ -29,17 +26,15 @@ public class ViewHolder<VIEWMODEL, BINDING extends ViewDataBinding>
     @Inject
     VIEWMODEL viewModel;
 
-    public ViewHolder(View itemView) {
+    public BaseViewHolder(View itemView) {
         super(itemView);
     }
 
     protected ViewHolderComponent getComponent() {
         if (viewHolderComponent == null) {
-            AppComponent applicationComponent = Application.get(itemView.getContext()).getApplicationComponent();
             viewHolderComponent = DaggerViewHolderComponent
                     .builder()
-                    .appComponent(applicationComponent)
-                    .viewModelModul(new ViewModelModul())
+                    .activityComponent(((BaseActivity) itemView.getContext()).getActivityComponent())
                     .build();
         }
         return viewHolderComponent;

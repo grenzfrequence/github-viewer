@@ -6,36 +6,47 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.grenzfrequence.githubdisplayer.R;
-import com.grenzfrequence.githubdisplayer.repolist.data.RepoListItem;
+import com.grenzfrequence.githubdisplayer.repolist.data.RepoModel;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by grenzfrequence on 04/03/17.
  */
 public class RepoListAdapter extends RecyclerView.Adapter<RepoListItemViewHolder> {
 
-    private List<RepoListItem> repoListItems;
+    private List<RepoModel> repoListItems = new ArrayList<>();
 
-    public RepoListAdapter(List<RepoListItem> repoListItems) {
+    @Inject
+    public RepoListAdapter() {
+        super();
+    }
+
+    public void setRepoListItems(List<RepoModel> repoListItems) {
         this.repoListItems = repoListItems;
     }
 
     @Override
     public RepoListItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                                  .inflate(R.layout.repo_list_item, null, false);
+                                  .inflate(R.layout.repo_list_item, parent, false);
         return new RepoListItemViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RepoListItemViewHolder holder, int position) {
+        if (repoListItems == null) {
+            return;
+        }
         holder.getViewModel().setRepoListItem(repoListItems.get(position));
         holder.executePendingBindings();
     }
 
     @Override
     public int getItemCount() {
-        return repoListItems.size();
+        return repoListItems == null ? 0 : repoListItems.size();
     }
 }

@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">GithubDisplayer</string>
 
-    <string name="list_not_available">list not available</string>
+    <!--Business case errors of repo list-->
+    <string name="error_no_repo_found">Type other user name what owns repositories</string>
+    <string name="error_rate_limit_exceeded">Try one hour later after Github rate limit is reset</string>
+
+    <!--General errors-->
+    <string name="error_no_connection">Try again after connection to server is established</string>
+
+    <string name="hint_user_name">user name</string>
 </resources>

@@ -2,62 +2,66 @@ package com.grenzfrequence.githubdisplayer.repolist.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.grenzfrequence.githubdisplayer.R;
-import com.grenzfrequence.githubdisplayer.repolist.data.RepoListItem;
-import com.grenzfrequence.githubdisplayer.repolist.ui.recyclerview.RepoListAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import com.grenzfrequence.githubdisplayer.base.BaseFragment;
+import com.grenzfrequence.githubdisplayer.databinding.RepoListFragmentBinding;
+import com.grenzfrequence.githubdisplayer.repolist.viewmodel.RepoListViewModel;
 
 /**
  * Created by grenzfrequence on 01/03/17.
  */
 
-public class RepoListFragment extends Fragment {
+public class RepoListFragment
+        extends BaseFragment<RepoListFragmentBinding, RepoListViewModel>
+        implements IRefreshableView {
 
-    @BindView(R.id.tv_user_name) TextView     tvUserName;
-    @BindView(R.id.rv_repo_list) RecyclerView rvRepoList;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getFragmentComponent().inject(this);
+    }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.repo_list_fragment, container, false);
-        ButterKnife.bind(this, view);
-        rvRepoList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //
-        // get here saved instances when != null
-        //
-        update();
-
-        return view;
+    public View onCreateView(
+            LayoutInflater inflater,
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        return bindViewModel(inflater, container, R.layout.repo_list_fragment);
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        //
-        // save here instances for configuration changes
-        //
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        binding.rvRepoList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        binding.rvRepoList.setAdapter(viewModel.getAdapter());
+
+        binding.srlRefresh.setOnRefreshListener(() -> viewModel.loadData());
+
+        viewModel.setShowList(false);
+        viewModel.setShowPlaceholder(false);
+        showRefresh(false);
     }
 
-    void update() {
-        List<RepoListItem> repoListItems = new ArrayList<>(10);
-        for (int i = 0; i < 10; i++){
-            RepoListItem repoListItem = RepoListItem.builder().repoName("Test " + i).build();
-            repoListItems.add(repoListItem);
+    @Override
+    public void showRefresh(boolean show) {
+        if (show) {
+            viewModel.setShowList(false);
+            viewModel.setShowPlaceholder(false);
         }
-        rvRepoList.setAdapter(new RepoListAdapter(repoListItems));
+        binding.srlRefresh.post(() -> binding.srlRefresh.setRefreshing(show));
+    }
+
+    @Override
+    public void onRefreshed(Boolean success) {
+        showRefresh(false);
+        viewModel.setShowList(success);
+        viewModel.setShowPlaceholder(!success);
     }
 
 }

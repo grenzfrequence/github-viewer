@@ -4,18 +4,20 @@ import android.app.Application;
 import android.support.annotation.NonNull;
 import android.support.compat.BuildConfig;
 
-import com.grenzfrequence.githubdisplayer.di.scopes.ApplicationScope;
+import com.grenzfrequence.githubdisplayer.di.scopes.AppScope;
 import com.grenzfrequence.githubdisplayer.utils.UrlReference;
 import com.grenzfrequence.githubdisplayer.webservice.MyAdapterFactory;
 import com.squareup.moshi.Moshi;
 
+import java.util.List;
+
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.Cache;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
 /**
@@ -34,19 +36,19 @@ public class NetModule {
     }
 
     @Provides
-    @ApplicationScope
+    @AppScope
     @NonNull
     public UrlReference provideUrlReference() {
         return baseUrlReference;
     }
 
     @Provides
-    @ApplicationScope
+    @AppScope
     @NonNull
     Retrofit provideRetrofit(Moshi moshi, OkHttpClient client) {
         return new Retrofit.Builder()
                 .baseUrl(baseUrlReference.url())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .client(client)
                 .validateEagerly(BuildConfig.DEBUG)
@@ -54,7 +56,7 @@ public class NetModule {
     }
 
     @Provides
-    @ApplicationScope
+    @AppScope
     @NonNull
     Moshi provideMoshi() {
         return new Moshi
@@ -64,28 +66,26 @@ public class NetModule {
     }
 
     @Provides
-    @ApplicationScope
+    @AppScope
     @NonNull
-    OkHttpClient provideClient(Cache cache, HttpLoggingInterceptor httpLoggingInterceptor) {
+    OkHttpClient provideClient(Cache cache, List<Interceptor> interceptors) {
 
-        return new OkHttpClient.Builder()
+        OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
+
+        for (Interceptor interceptor : interceptors) {
+            httpBuilder.addInterceptor(interceptor);
+        }
+
+        return httpBuilder
                 .cache(cache)
-                .addNetworkInterceptor(httpLoggingInterceptor)
                 .build();
     }
 
     @Provides
-    @ApplicationScope
+    @AppScope
     @NonNull
     Cache provideCache(Application application) {
         return new Cache(application.getCacheDir(), maxCacheSize);
-    }
-
-    @Provides
-    @ApplicationScope
-    @NonNull
-    HttpLoggingInterceptor provideHttpLoggingInterceptor() {
-        return (new HttpLoggingInterceptor()).setLevel(HttpLoggingInterceptor.Level.BODY);
     }
 
 }

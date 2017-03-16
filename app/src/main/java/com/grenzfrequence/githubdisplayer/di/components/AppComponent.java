@@ -1,8 +1,12 @@
 package com.grenzfrequence.githubdisplayer.di.components;
 
+import android.app.Application;
+import android.content.res.Resources;
+
 import com.grenzfrequence.githubdisplayer.di.modules.AppModule;
+import com.grenzfrequence.githubdisplayer.di.modules.InterceptorModule;
 import com.grenzfrequence.githubdisplayer.di.modules.NetModule;
-import com.grenzfrequence.githubdisplayer.di.scopes.ApplicationScope;
+import com.grenzfrequence.githubdisplayer.di.scopes.AppScope;
 import com.grenzfrequence.githubdisplayer.utils.UrlReference;
 import com.squareup.moshi.Moshi;
 
@@ -14,14 +18,18 @@ import retrofit2.Retrofit;
  */
 
 
-@Component(modules = {AppModule.class, NetModule.class})
-@ApplicationScope
+@Component(modules = {AppModule.class, NetModule.class, InterceptorModule.class})
+@AppScope
 public interface AppComponent {
 
-    Retrofit getRetrofit();
+    Application application();
 
-    Moshi getMoshi();
+    Resources resources();
 
-    UrlReference getBaseUrlReference();
+    Retrofit retrofit();
+
+    Moshi moshi();
+
+    UrlReference baseUrlReference();
 
 }
