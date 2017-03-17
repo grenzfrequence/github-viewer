@@ -42,9 +42,6 @@ public class RepoListFragment
         binding.rvRepoList.setAdapter(viewModel.getAdapter());
 
         binding.srlRefresh.setOnRefreshListener(() -> viewModel.loadData());
-
-        viewModel.setShowList(false);
-        viewModel.setShowPlaceholder(false);
         showRefresh(false);
     }
 
