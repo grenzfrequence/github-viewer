@@ -70,6 +70,11 @@ public class RepoListViewModel extends RecyclerViewModel<IRefreshableView, RepoL
     @Bindable
     public void setUserName(String userName) {
         this.userName = userName;
+        if(ObjectUtils.isNullOrEmpty(userName)) {
+            dispose();
+            getView().onRefreshed(false);
+            return;
+        }
         loadData();
     }
 
