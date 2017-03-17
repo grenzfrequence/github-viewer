@@ -6,7 +6,7 @@ import java.util.List;
  * Created by grenzfrequence on 12/03/17.
  */
 
-public class Utils {
+public class ObjectUtils {
 
     public static boolean isNullOrEmpty(String string) {
         return string == null || string.isEmpty();

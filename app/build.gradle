@@ -40,6 +40,8 @@ dependencies {
     androidTestCompile(libraries.espresso, {
         exclude group: groups.androidsupport, module: modul.supportannotations
     })
+    compile libraries.jodaTime
+
     compile libraries.appCompat
     compile libraries.design
     compile libraries.recyclerView

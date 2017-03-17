@@ -6,7 +6,8 @@ import android.support.compat.BuildConfig;
 
 import com.grenzfrequence.githubdisplayer.di.scopes.AppScope;
 import com.grenzfrequence.githubdisplayer.utils.UrlReference;
-import com.grenzfrequence.githubdisplayer.webservice.MyAdapterFactory;
+import com.grenzfrequence.githubdisplayer.webservice.AutoValueAdapterFactory;
+import com.grenzfrequence.githubdisplayer.webservice.type_adapter.DateAdapter;
 import com.squareup.moshi.Moshi;
 
 import java.util.List;
@@ -61,7 +62,8 @@ public class NetModule {
     Moshi provideMoshi() {
         return new Moshi
                 .Builder()
-                .add(MyAdapterFactory.create())
+                .add(AutoValueAdapterFactory.create())
+                .add(new DateAdapter())
                 .build();
     }
 

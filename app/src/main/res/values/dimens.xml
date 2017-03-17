@@ -11,4 +11,5 @@
     <dimen name="xxl">48dp</dimen>
     <dimen name="radius_medium">4dp</dimen>
     <dimen name="elevation_tiny">2dp</dimen>
+    <dimen name="view_size_middle">40dp</dimen>
 </resources>

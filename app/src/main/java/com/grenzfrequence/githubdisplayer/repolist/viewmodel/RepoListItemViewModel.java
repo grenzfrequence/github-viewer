@@ -7,6 +7,8 @@ import android.databinding.ObservableInt;
 import com.grenzfrequence.githubdisplayer.repolist.data.OwnerModel;
 import com.grenzfrequence.githubdisplayer.repolist.data.RepoModel;
 
+import org.joda.time.DateTime;
+
 import javax.inject.Inject;
 
 /**
@@ -18,9 +20,10 @@ public class RepoListItemViewModel extends BaseObservable {
     public final ObservableField<String> ownerName       = new ObservableField<>("");
     public final ObservableField<String> ownerAvatarLink = new ObservableField<>("");
 
-    public final ObservableInt           repoId          = new ObservableInt(0);
-    public final ObservableField<String> repoName        = new ObservableField<>("");
-    public final ObservableField<String> repoDescription = new ObservableField<>("");
+    public final ObservableInt             repoId          = new ObservableInt(0);
+    public final ObservableField<String>   repoName        = new ObservableField<>("");
+    public final ObservableField<String>   repoDescription = new ObservableField<>("");
+    public final ObservableField<DateTime> repoUpdateDate  = new ObservableField<>(null);
 
     @Inject
     public RepoListItemViewModel() {
@@ -35,6 +38,7 @@ public class RepoListItemViewModel extends BaseObservable {
         repoId.set(repoListItem.repoId());
         repoName.set(repoListItem.repoName());
         repoDescription.set(repoListItem.repoDescription());
+        repoUpdateDate.set(repoListItem.repoUpdateDate());
 
         notifyChange();
     }

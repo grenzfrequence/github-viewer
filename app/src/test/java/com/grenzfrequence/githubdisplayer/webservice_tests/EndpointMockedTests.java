@@ -9,6 +9,7 @@ import com.grenzfrequence.githubdisplayer.repolist.data.OwnerModel;
 import com.grenzfrequence.githubdisplayer.repolist.data.RepoApi;
 import com.grenzfrequence.githubdisplayer.repolist.data.RepoModel;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -53,31 +54,33 @@ public class EndpointMockedTests extends BaseUnitTest {
         assertThat(list).isNotNull();
         assertThat(list.size()).isEqualTo(3);
 
-        RepoModel repoListModel1 = list.get(0);
-        assertThat(repoListModel1.repoId()).isEqualTo(79553105);
-        assertThat(repoListModel1.repoName()).isEqualTo("Repo01");
-        assertThat(repoListModel1.repoDescription()).isEqualTo("Repo01 description");
-        assertThat(repoListModel1.repoOwner().id()).isEqualTo(16125495);
-        assertThat(repoListModel1.repoOwner().name()).isEqualTo("TestUser01");
-        assertThat(repoListModel1.repoOwner().avatarLink())
+        RepoModel repoListModel = list.get(0);
+        assertThat(repoListModel.repoId()).isEqualTo(79553105);
+        assertThat(repoListModel.repoName()).isEqualTo("Repo01");
+        assertThat(repoListModel.repoDescription()).isEqualTo("Repo01 description");
+        assertThat(repoListModel.repoUpdateDate()).isEqualTo(new DateTime("2015-10-18T15:45:28Z"));
+        assertThat(repoListModel.repoOwner().id()).isEqualTo(16125495);
+        assertThat(repoListModel.repoOwner().name()).isEqualTo("TestUser01");
+        assertThat(repoListModel.repoOwner().avatarLink())
                 .isEqualTo("https://avatars0.githubusercontent.com/u/16125495?v=3");
 
-        RepoModel repoListModel2 = list.get(1);
-        assertThat(repoListModel2.repoId()).isEqualTo(65045868);
-        assertThat(repoListModel2.repoName()).isEqualTo("Repo02");
-        assertThat(repoListModel2.repoDescription()).isNull();
-        assertThat(repoListModel2.repoOwner().id()).isEqualTo(16125495);
-        assertThat(repoListModel2.repoOwner().name()).isEqualTo("TestUser02");
-        assertThat(repoListModel2.repoOwner().avatarLink()).isNull();
+        repoListModel = list.get(1);
+        assertThat(repoListModel.repoId()).isEqualTo(65045868);
+        assertThat(repoListModel.repoName()).isEqualTo("Repo02");
+        assertThat(repoListModel.repoDescription()).isNull();
+        assertThat(repoListModel.repoUpdateDate()).isEqualTo(new DateTime("2016-10-18T15:45:28Z"));
+        assertThat(repoListModel.repoOwner().id()).isEqualTo(16125495);
+        assertThat(repoListModel.repoOwner().name()).isEqualTo("TestUser02");
+        assertThat(repoListModel.repoOwner().avatarLink()).isNull();
 
-        RepoModel repoListModel3 = list.get(2);
-        assertThat(repoListModel3.repoId()).isEqualTo(71264326);
-        assertThat(repoListModel3.repoName()).isEqualTo("Repo03");
-        assertThat(repoListModel3.repoDescription()).isNull();
-        assertThat(repoListModel3.repoOwner().id()).isEqualTo(16125495);
-        assertThat(repoListModel3.repoOwner().name()).isEqualTo("TestUser03");
-        assertThat(repoListModel3.repoOwner().avatarLink()).isNull();
-
+        repoListModel = list.get(2);
+        assertThat(repoListModel.repoId()).isEqualTo(71264326);
+        assertThat(repoListModel.repoName()).isEqualTo("Repo03");
+        assertThat(repoListModel.repoDescription()).isNull();
+        assertThat(repoListModel.repoUpdateDate()).isEqualTo(new DateTime("2014-10-18T15:45:28Z"));
+        assertThat(repoListModel.repoOwner().id()).isEqualTo(16125495);
+        assertThat(repoListModel.repoOwner().name()).isEqualTo("TestUser03");
+        assertThat(repoListModel.repoOwner().avatarLink()).isNull();
     }
 
     @Test
@@ -116,7 +119,8 @@ public class EndpointMockedTests extends BaseUnitTest {
                         "         \"id\": 16125495,\n" +
                         "         \"avatar_url\": \"https://avatars0.githubusercontent.com/u/16125495?v=3\"\n" +
                         "      },\n" +
-                        "      \"description\": \"Repo01 description\"\n" +
+                        "      \"description\": \"Repo01 description\",\n" +
+                        "      \"updated_at\": \"2015-10-18T15:45:28Z\"\n" +
                         "   },\n" +
                         "   {\n" +
                         "      \"id\": 65045868,\n" +
@@ -126,7 +130,8 @@ public class EndpointMockedTests extends BaseUnitTest {
                         "         \"id\": 16125495,\n" +
                         "         \"avatar_url\": null\n" +
                         "      },\n" +
-                        "      \"description\": null\n" +
+                        "      \"description\": null,\n" +
+                        "      \"updated_at\": \"2016-10-18T15:45:28Z\"\n" +
                         "   },\n" +
                         "   {\n" +
                         "      \"id\": 71264326,\n" +
@@ -136,7 +141,8 @@ public class EndpointMockedTests extends BaseUnitTest {
                         "         \"id\": 16125495,\n" +
                         "         \"avatar_url\": null\n" +
                         "      },\n" +
-                        "      \"description\": null\n" +
+                        "      \"description\": null,\n" +
+                        "      \"updated_at\": \"2014-10-18T15:45:28Z\"\n" +
                         "   }\n" +
                         "]"
         ));

@@ -2,6 +2,7 @@ package com.grenzfrequence.githubdisplayer.repolist.viewmodel;
 
 import android.databinding.Bindable;
 import android.databinding.ObservableBoolean;
+import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.os.Bundle;
 
@@ -11,13 +12,15 @@ import com.grenzfrequence.githubdisplayer.base.RecyclerViewModel;
 import com.grenzfrequence.githubdisplayer.common.ErrMsg;
 import com.grenzfrequence.githubdisplayer.di.qualifiers.UiErrMsgQualifier;
 import com.grenzfrequence.githubdisplayer.global.HttpResponses;
+import com.grenzfrequence.githubdisplayer.repolist.data.OwnerModel;
 import com.grenzfrequence.githubdisplayer.repolist.data.RepoApi;
 import com.grenzfrequence.githubdisplayer.repolist.data.RepoModel;
 import com.grenzfrequence.githubdisplayer.repolist.ui.IRefreshableView;
 import com.grenzfrequence.githubdisplayer.repolist.ui.recyclerview.RepoListAdapter;
-import com.grenzfrequence.githubdisplayer.utils.Utils;
+import com.grenzfrequence.githubdisplayer.utils.ObjectUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -42,11 +45,12 @@ public class RepoListViewModel extends RecyclerViewModel<IRefreshableView, RepoL
     private RepoApi repoListApi;
     private List<RepoModel> repoListItems = new ArrayList<>();
 
-    private      String            userName          = "";
-    public final ObservableBoolean showList          = new ObservableBoolean(false);
-    public final ObservableBoolean showPlaceholder   = new ObservableBoolean(false);
-    public final ObservableInt     errorMessageId    = new ObservableInt();
-    public final ObservableInt     placeHolderIconId = new ObservableInt(R.drawable.ic_info_outline_black);
+    private      String                  userName          = "";
+    public final ObservableField<String> avatarUrl         = new ObservableField<>(null);
+    public final ObservableBoolean       showList          = new ObservableBoolean(false);
+    public final ObservableBoolean       showPlaceholder   = new ObservableBoolean(false);
+    public final ObservableInt           errorMessageId    = new ObservableInt();
+    public final ObservableInt           placeHolderIconId = new ObservableInt(R.drawable.ic_info_outline_black);
 
     private Disposable subscription;
 
@@ -61,6 +65,25 @@ public class RepoListViewModel extends RecyclerViewModel<IRefreshableView, RepoL
 
         this.remoteErrMessages = remoteErrMessages;
         errorMessageId.set(remoteErrMessages.get(HttpResponses.HTTP_CUSTOM_DEFAULT).getErrorMessageId());
+    }
+
+    @Bindable
+    public void setUserName(String userName) {
+        this.userName = userName;
+        loadData();
+    }
+
+    @Bindable
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setShowList(boolean show) {
+        this.showList.set(show);
+    }
+
+    public void setShowPlaceholder(boolean show) {
+        this.showPlaceholder.set(show);
     }
 
     @Override
@@ -86,17 +109,22 @@ public class RepoListViewModel extends RecyclerViewModel<IRefreshableView, RepoL
         dispose();
         subscription = repoListApi
                 .getRepoList(userName)
+                .map(response -> {
+                    List<RepoModel> repoList = response.body();
+                    Collections.sort(repoList);
+                    return response;
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         repoListItemsResponse -> {
                             List<RepoModel> repoListItems = repoListItemsResponse.body();
-                            updateList(repoListItems);
+                            updateUi(repoListItems);
                             handleBusinessCaseErrors(
                                     repoListItemsResponse,
-                                    !Utils.isNullOrEmpty(repoListItems));
+                                    !ObjectUtils.isNullOrEmpty(repoListItems));
                         }, throwable -> {
-                            updateList(null);
+                            updateUi(null);
                             getView().onRefreshed(false);
 
                             ErrMsg errMsg = remoteErrMessages.get(HttpResponses.HTTP_CUSTOM_DEFAULT);
@@ -106,28 +134,20 @@ public class RepoListViewModel extends RecyclerViewModel<IRefreshableView, RepoL
                 );
     }
 
-    @Bindable
-    public void setUserName(String userName) {
-        this.userName = userName;
-        loadData();
-    }
-
-    @Bindable
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setShowList(boolean show) {
-        this.showList.set(show);
-    }
-
-    public void setShowPlaceholder(boolean show) {
-        this.showPlaceholder.set(show);
-    }
-
-    private void updateList(List<RepoModel> repoListItems) {
+    private void updateUi(List<RepoModel> repoListItems) {
         getAdapter().setRepoListItems(repoListItems);
         getAdapter().notifyDataSetChanged();
+
+        if (ObjectUtils.isNullOrEmpty(repoListItems)) {
+            avatarUrl.set(null);
+            return;
+        }
+        OwnerModel ownerModel = repoListItems.get(0).repoOwner();
+        if (ownerModel == null || ObjectUtils.isNullOrEmpty(ownerModel.avatarLink())) {
+            avatarUrl.set(null);
+            return;
+        }
+        avatarUrl.set(ownerModel.avatarLink());
     }
 
     private <T> void handleBusinessCaseErrors(Response<T> response, boolean isRepoExists) {

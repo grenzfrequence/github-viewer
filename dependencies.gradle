@@ -6,6 +6,8 @@ ext.versions = [
         gradle             : '2.2.3',
         libVersionChecker  : '0.14.0',
 
+        jodaTime           : '2.9.4',
+
         retrolambda        : '3.6.0',
 
         support            : '25.1.0',
@@ -44,6 +46,8 @@ ext.gradlePlugins = [
 ]
 
 ext.libraries = [
+        jodaTime                 : "joda-time:joda-time:$versions.jodaTime",
+
         appCompat                : "com.android.support:appcompat-v7:$versions.support",
         design                   : "com.android.support:design:$versions.support",
         recyclerView             : "com.android.support:recyclerview-v7:$versions.support",
