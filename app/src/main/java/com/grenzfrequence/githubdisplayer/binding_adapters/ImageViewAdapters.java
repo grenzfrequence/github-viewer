@@ -1,6 +1,7 @@
 package com.grenzfrequence.githubdisplayer.binding_adapters;
 
 import android.databinding.BindingAdapter;
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -17,13 +18,17 @@ public class ImageViewAdapters {
         imageView.setImageResource(resourceId);
     }
 
-    @BindingAdapter("srcCompat")
-    public static void loadImageFile(ImageView imageView, String imageUrl) {
+    @BindingAdapter({"srcCompat", "app:placeholder"})
+    public static void loadImageFile(
+            ImageView imageView, String imageUrl, Drawable placeholder) {
+
         if (ObjectUtils.isNullOrEmpty(imageUrl)) {
+            imageView.setImageDrawable(placeholder);
             return;
         }
         Glide.with(imageView.getContext())
              .load(imageUrl)
+             .placeholder(placeholder)
              .centerCrop()
              .crossFade()
              .into(imageView);
