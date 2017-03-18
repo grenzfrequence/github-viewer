@@ -20,6 +20,6 @@ public interface ViewHolderComponent {
     void inject(RepoListItemViewHolder viewHolder);
 
     @NonNull
-    RepoListItemViewModel getRepoListViewModel();
+    RepoListItemViewModel getRepoListItemViewModel();
 
 }
