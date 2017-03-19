@@ -7,14 +7,14 @@ import android.support.v7.widget.RecyclerView;
  * Created by grenzfrequence on 09/03/17.
  */
 
-public abstract class RecyclerViewModel<VIEW extends MvvmView, ADAPTER extends RecyclerView.Adapter>
+public abstract class BaseRecyclerViewModel<VIEW extends MvvmView, ADAPTER extends RecyclerView.Adapter>
         extends BaseViewModel
         implements IRecyclerViewModel<VIEW> {
 
     private VIEW    view;
     private ADAPTER adapter;
 
-    public RecyclerViewModel(ADAPTER adapter, IResourceValues recAccess) {
+    public BaseRecyclerViewModel(ADAPTER adapter, IResourceValues recAccess) {
         super(recAccess);
         this.adapter = adapter;
     }

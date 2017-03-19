@@ -8,7 +8,7 @@ import android.os.Bundle;
 
 import com.grenzfrequence.githubdisplayer.R;
 import com.grenzfrequence.githubdisplayer.base.IResourceValues;
-import com.grenzfrequence.githubdisplayer.base.RecyclerViewModel;
+import com.grenzfrequence.githubdisplayer.base.BaseRecyclerViewModel;
 import com.grenzfrequence.githubdisplayer.common.ErrMsg;
 import com.grenzfrequence.githubdisplayer.di.qualifiers.UiErrMsgQualifier;
 import com.grenzfrequence.githubdisplayer.global.HttpResponses;
@@ -35,7 +35,7 @@ import retrofit2.Response;
  * Created by grenzfrequence on 07/03/17.
  */
 
-public class RepoListViewModel extends RecyclerViewModel<IRefreshableView, RepoListAdapter> {
+public class RepoListViewModel extends BaseRecyclerViewModel<IRefreshableView, RepoListAdapter> {
 
     private static final String KEY_USER_NAME = "UserName";
 
