@@ -1,21 +1,21 @@
 package com.grenzfrequence.githubdisplayer.repolist.viewmodel;
 
-import android.databinding.BaseObservable;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
+import android.os.Bundle;
 
+import com.grenzfrequence.githubdisplayer.base.BaseViewModel;
+import com.grenzfrequence.githubdisplayer.common.ui.IView;
 import com.grenzfrequence.githubdisplayer.repolist.data.OwnerModel;
 import com.grenzfrequence.githubdisplayer.repolist.data.RepoModel;
 
 import org.joda.time.DateTime;
 
-import javax.inject.Inject;
-
 /**
  * Created by grenzfrequence on 01/03/17.
  */
 
-public class RepoListItemViewModel extends BaseObservable {
+public class RepoListItemViewModel extends BaseViewModel<IView, RepoModel> {
 
     public final ObservableField<String> ownerName       = new ObservableField<>("");
     public final ObservableField<String> ownerAvatarLink = new ObservableField<>("");
@@ -25,12 +25,8 @@ public class RepoListItemViewModel extends BaseObservable {
     public final ObservableField<String>   repoDescription = new ObservableField<>("");
     public final ObservableField<DateTime> repoUpdateDate  = new ObservableField<>(null);
 
-    @Inject
-    public RepoListItemViewModel() {
-        super();
-    }
-
-    public void setRepoListItem(RepoModel repoListItem) {
+    @Override
+    public void setData(RepoModel repoListItem) {
         OwnerModel owner = repoListItem.repoOwner();
         ownerName.set(owner.name());
         ownerAvatarLink.set(owner.avatarLink());
@@ -43,4 +39,13 @@ public class RepoListItemViewModel extends BaseObservable {
         notifyChange();
     }
 
+    @Override
+    public void restoreInstanceState(Bundle savedInstanceState) {
+        // not necessary because data is reloaded
+    }
+
+    @Override
+    public void saveInstanceState(Bundle outState) {
+        // not necessary because data is reloaded
+    }
 }

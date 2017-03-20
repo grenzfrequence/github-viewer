@@ -7,19 +7,17 @@ import android.databinding.ObservableInt;
 import android.os.Bundle;
 
 import com.grenzfrequence.githubdisplayer.R;
-import com.grenzfrequence.githubdisplayer.base.IResourceValues;
 import com.grenzfrequence.githubdisplayer.base.BaseRecyclerViewModel;
 import com.grenzfrequence.githubdisplayer.common.ErrMsg;
+import com.grenzfrequence.githubdisplayer.common.ui.IRefreshableView;
+import com.grenzfrequence.githubdisplayer.common.ui.recycler_binding_adapter.RecyclerBindingAdapter;
 import com.grenzfrequence.githubdisplayer.di.qualifiers.UiErrMsgQualifier;
 import com.grenzfrequence.githubdisplayer.global.HttpResponses;
 import com.grenzfrequence.githubdisplayer.repolist.data.OwnerModel;
 import com.grenzfrequence.githubdisplayer.repolist.data.RepoApi;
 import com.grenzfrequence.githubdisplayer.repolist.data.RepoModel;
-import com.grenzfrequence.githubdisplayer.repolist.ui.IRefreshableView;
-import com.grenzfrequence.githubdisplayer.repolist.ui.recyclerview.RepoListAdapter;
 import com.grenzfrequence.githubdisplayer.utils.ObjectUtils;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,15 +33,18 @@ import retrofit2.Response;
  * Created by grenzfrequence on 07/03/17.
  */
 
-public class RepoListViewModel extends BaseRecyclerViewModel<IRefreshableView, RepoListAdapter> {
+public class RepoListViewModel
+        extends BaseRecyclerViewModel<
+        IRefreshableView,
+        RecyclerBindingAdapter<RepoModel, RepoListItemViewModel>,
+        String> {
 
     private static final String KEY_USER_NAME = "UserName";
 
     @UiErrMsgQualifier
-    private Map<Integer, ErrMsg> remoteErrMessages;
+    private Map<Integer, ErrMsg> errMessages;
 
     private RepoApi repoListApi;
-    private List<RepoModel> repoListItems = new ArrayList<>();
 
     private      String                  userName          = "";
     public final ObservableField<String> avatarUrl         = new ObservableField<>(null);
@@ -56,21 +57,24 @@ public class RepoListViewModel extends BaseRecyclerViewModel<IRefreshableView, R
 
     @Inject
     public RepoListViewModel(
-            RepoListAdapter repoListAdapter,
             RepoApi repoListApi,
-            IResourceValues resAccess,
-            @UiErrMsgQualifier Map<Integer, ErrMsg> remoteErrMessages) {
-        super(repoListAdapter, resAccess);
+            @UiErrMsgQualifier Map<Integer, ErrMsg> errMessages,
+            RecyclerBindingAdapter<RepoModel, RepoListItemViewModel> adapter) {
+        super(adapter);
         this.repoListApi = repoListApi;
+        this.errMessages = errMessages;
+        errorMessageId.set(errMessages.get(HttpResponses.HTTP_CUSTOM_DEFAULT).getErrorMessageId());
+    }
 
-        this.remoteErrMessages = remoteErrMessages;
-        errorMessageId.set(remoteErrMessages.get(HttpResponses.HTTP_CUSTOM_DEFAULT).getErrorMessageId());
+    @Override
+    public void setData(String userName) {
+        setUserName(userName);
     }
 
     @Bindable
     public void setUserName(String userName) {
         this.userName = userName;
-        if(ObjectUtils.isNullOrEmpty(userName)) {
+        if (ObjectUtils.isNullOrEmpty(userName)) {
             dispose();
             getView().onRefreshed(false);
             return;
@@ -132,7 +136,7 @@ public class RepoListViewModel extends BaseRecyclerViewModel<IRefreshableView, R
                             updateUi(null);
                             getView().onRefreshed(false);
 
-                            ErrMsg errMsg = remoteErrMessages.get(HttpResponses.HTTP_CUSTOM_DEFAULT);
+                            ErrMsg errMsg = errMessages.get(HttpResponses.HTTP_CUSTOM_DEFAULT);
                             placeHolderIconId.set(errMsg.getErrorIconId());
                             errorMessageId.set(errMsg.getErrorMessageId());
                         }
@@ -140,7 +144,7 @@ public class RepoListViewModel extends BaseRecyclerViewModel<IRefreshableView, R
     }
 
     private void updateUi(List<RepoModel> repoListItems) {
-        getAdapter().setRepoListItems(repoListItems);
+        getAdapter().setListItems(repoListItems);
         getAdapter().notifyDataSetChanged();
 
         if (ObjectUtils.isNullOrEmpty(repoListItems)) {
@@ -160,12 +164,12 @@ public class RepoListViewModel extends BaseRecyclerViewModel<IRefreshableView, R
         placeHolderIconId.set(R.drawable.ic_info_outline_black);
         int errorCode = response.code();
         if (errorCode != HttpResponses.HTTP_OK) {
-            errMsg = remoteErrMessages.get(errorCode);
+            errMsg = errMessages.get(errorCode);
             if (errMsg == null) {
-                errMsg = remoteErrMessages.get(HttpResponses.HTTP_CUSTOM_DEFAULT);
+                errMsg = errMessages.get(HttpResponses.HTTP_CUSTOM_DEFAULT);
             }
         } else if (!isRepoExists) {
-            errMsg = remoteErrMessages.get(HttpResponses.HTTP_NOT_FOUND);
+            errMsg = errMessages.get(HttpResponses.HTTP_NOT_FOUND);
         }
         if (errMsg != null) {
             int errorMessageId = errMsg.getErrorMessageId();

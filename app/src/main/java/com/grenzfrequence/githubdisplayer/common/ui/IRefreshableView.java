@@ -1,4 +1,4 @@
-package com.grenzfrequence.githubdisplayer.repolist.ui;
+package com.grenzfrequence.githubdisplayer.common.ui;
 
 import com.grenzfrequence.githubdisplayer.base.MvvmView;
 

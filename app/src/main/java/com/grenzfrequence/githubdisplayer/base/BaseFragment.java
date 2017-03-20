@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.databinding.library.baseAdapters.BR;
+import com.grenzfrequence.githubdisplayer.BR;
 import com.grenzfrequence.githubdisplayer.di.components.FragmentComponent;
 import com.grenzfrequence.githubdisplayer.utils.ComponentManager;
 

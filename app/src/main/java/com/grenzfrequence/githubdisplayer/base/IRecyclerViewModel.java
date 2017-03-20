@@ -6,6 +6,6 @@ import android.support.v7.widget.RecyclerView;
  * Created by grenzfrequence on 07/03/17.
  */
 
-public interface IRecyclerViewModel<VIEW extends MvvmView> extends ILoaderViewModel<VIEW> {
+public interface IRecyclerViewModel<VIEW extends MvvmView, ITEM> extends ILoaderViewModel<VIEW, ITEM> {
     RecyclerView.Adapter getAdapter();
 }

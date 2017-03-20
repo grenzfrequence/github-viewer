@@ -2,12 +2,16 @@ package com.grenzfrequence.githubdisplayer.di.components;
 
 import com.grenzfrequence.githubdisplayer.base.IResourceValues;
 import com.grenzfrequence.githubdisplayer.common.ErrMsg;
+import com.grenzfrequence.githubdisplayer.common.ui.recycler_binding_adapter.RecyclerBindingAdapter;
 import com.grenzfrequence.githubdisplayer.di.modules.FragmentModule;
 import com.grenzfrequence.githubdisplayer.di.qualifiers.UiErrMsgQualifier;
 import com.grenzfrequence.githubdisplayer.di.scopes.FragmentScope;
 import com.grenzfrequence.githubdisplayer.repolist.data.OwnerApi;
 import com.grenzfrequence.githubdisplayer.repolist.data.RepoApi;
+import com.grenzfrequence.githubdisplayer.repolist.data.RepoModel;
 import com.grenzfrequence.githubdisplayer.repolist.ui.RepoListFragment;
+import com.grenzfrequence.githubdisplayer.repolist.viewmodel.RepoListItemViewModel;
+import com.grenzfrequence.githubdisplayer.repolist.viewmodel.RepoListViewModel;
 
 import java.util.Map;
 
@@ -29,6 +33,10 @@ public interface FragmentComponent {
     RepoApi repoListApi();
 
     OwnerApi ownerApi();
+
+    RepoListViewModel repoListViewModel();
+
+    RecyclerBindingAdapter<RepoModel, RepoListItemViewModel> repoListViewAdapter();
 
     IResourceValues resourceValues();
 

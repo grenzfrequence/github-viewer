@@ -7,32 +7,14 @@ import android.support.v7.widget.RecyclerView;
  * Created by grenzfrequence on 09/03/17.
  */
 
-public abstract class BaseRecyclerViewModel<VIEW extends MvvmView, ADAPTER extends RecyclerView.Adapter>
-        extends BaseViewModel
-        implements IRecyclerViewModel<VIEW> {
+public abstract class BaseRecyclerViewModel<VIEW extends MvvmView, ADAPTER extends RecyclerView.Adapter, ITEM>
+        extends BaseViewModel<VIEW, ITEM>
+        implements IRecyclerViewModel<VIEW, ITEM> {
 
-    private VIEW    view;
     private ADAPTER adapter;
 
-    public BaseRecyclerViewModel(ADAPTER adapter, IResourceValues recAccess) {
-        super(recAccess);
+    public BaseRecyclerViewModel(ADAPTER adapter) {
         this.adapter = adapter;
-    }
-
-    @Override
-    public void attachView(@NonNull VIEW view) {
-        this.view = view;
-    }
-
-    @Override
-    public void detachView() {
-        view = null;
-    }
-
-    @Override
-    @NonNull
-    public VIEW getView() {
-        return view;
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.grenzfrequence.githubdisplayer.R;
 import com.grenzfrequence.githubdisplayer.base.BaseFragment;
 import com.grenzfrequence.githubdisplayer.databinding.RepoListFragmentBinding;
 import com.grenzfrequence.githubdisplayer.repolist.viewmodel.RepoListViewModel;
+import com.grenzfrequence.githubdisplayer.common.ui.IRefreshableView;
 
 /**
  * Created by grenzfrequence on 01/03/17.

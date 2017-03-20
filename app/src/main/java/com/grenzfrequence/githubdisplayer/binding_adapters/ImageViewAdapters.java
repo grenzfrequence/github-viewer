@@ -18,7 +18,7 @@ public class ImageViewAdapters {
         imageView.setImageResource(resourceId);
     }
 
-    @BindingAdapter({"srcCompat", "app:placeholder"})
+    @BindingAdapter({"srcCompat", "placeholder"})
     public static void loadImageFile(
             ImageView imageView, String imageUrl, Drawable placeholder) {
 

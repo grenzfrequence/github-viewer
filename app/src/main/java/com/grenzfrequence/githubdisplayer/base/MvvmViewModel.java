@@ -7,7 +7,9 @@ import android.os.Bundle;
  * Created by grenzfrequence on 08/03/17.
  */
 
-public interface MvvmViewModel<VIEW extends MvvmView> extends Observable {
+public interface MvvmViewModel<VIEW extends MvvmView, ITEM> extends Observable {
+
+    void setData(ITEM item);
 
     void attachView(VIEW view);
 
