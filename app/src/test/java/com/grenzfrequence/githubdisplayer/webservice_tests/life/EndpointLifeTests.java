@@ -1,4 +1,4 @@
-package com.grenzfrequence.githubdisplayer.webservice_tests;
+package com.grenzfrequence.githubdisplayer.webservice_tests.life;
 
 import com.grenzfrequence.githubdisplayer.BuildConfig;
 import com.grenzfrequence.githubdisplayer.base.BaseUnitTest;
@@ -26,6 +26,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Config(constants = BuildConfig.class)
 public class EndpointLifeTests extends BaseUnitTest {
 
+    private static final int    FIRST_PAGE         = 1;
+    private static final int    TWO_ITEMS_PER_PAGE = 2;
+    private static final String SORT_FIELD         = "updated";
+
     RepoApi repoListApi;
 
     @Before
@@ -36,9 +40,15 @@ public class EndpointLifeTests extends BaseUnitTest {
     @Test
     public void repoListModelTest() throws Exception {
         Response<List<RepoModel>> response;
-        response = repoListApi.getRepoList("grenzfrequence").blockingSingle();
+        response = repoListApi
+                .getRepoList("grenzfrequence", FIRST_PAGE, TWO_ITEMS_PER_PAGE, SORT_FIELD)
+                .blockingSingle();
 
         assertThat(response.body().size()).isGreaterThan(0);
+        assertThat(response.body().size()).isEqualTo(TWO_ITEMS_PER_PAGE);
+        assertThat(response.headers().get("Link")).isEqualTo(
+                "<https://api.github.com/user/16125495/repos?page=2&per_page=2&sort=updated>; rel=\"next\", " +
+                        "<https://api.github.com/user/16125495/repos?page=2&per_page=2&sort=updated>; rel=\"last\"");
     }
 
 }

@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import com.android.databinding.library.baseAdapters.BR;
 import com.grenzfrequence.githubdisplayer.R;
 import com.grenzfrequence.githubdisplayer.common.ErrMsg;
+import com.grenzfrequence.githubdisplayer.common.data.DataPager;
+import com.grenzfrequence.githubdisplayer.common.data.GitHubPager;
 import com.grenzfrequence.githubdisplayer.common.ui.recycler_binding_adapter.RecyclerBindingAdapter;
 import com.grenzfrequence.githubdisplayer.di.qualifiers.UiErrMsgQualifier;
 import com.grenzfrequence.githubdisplayer.repolist.data.OwnerApi;
@@ -43,8 +45,14 @@ public class FragmentModule {
     RepoListViewModel provideRepoListViewModel(
             RepoApi repoApi, @UiErrMsgQualifier Map<Integer,
             ErrMsg> errMessages,
-            RecyclerBindingAdapter<RepoModel, RepoListItemViewModel> adapter) {
-        return new RepoListViewModel(repoApi, errMessages, adapter);
+            DataPager dataPager) {
+        return new RepoListViewModel(repoApi, errMessages, dataPager);
+    }
+
+    @Provides
+    @NonNull
+    DataPager provideGitHubPager() {
+        return new GitHubPager();
     }
 
     @Provides
@@ -52,6 +60,7 @@ public class FragmentModule {
     RecyclerBindingAdapter<RepoModel, RepoListItemViewModel> provideRecyclerBindingAdapter() {
         return new RecyclerBindingAdapter<>(
                 R.layout.repo_list_item,
+                R.layout.recycler_binding_progress_bar,
                 BR.viewModel,
                 RepoListItemViewModel::new);
     }

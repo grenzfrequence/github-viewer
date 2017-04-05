@@ -9,8 +9,8 @@ import android.os.Bundle;
 import com.grenzfrequence.githubdisplayer.R;
 import com.grenzfrequence.githubdisplayer.base.BaseRecyclerViewModel;
 import com.grenzfrequence.githubdisplayer.common.ErrMsg;
-import com.grenzfrequence.githubdisplayer.common.ui.IRefreshableView;
-import com.grenzfrequence.githubdisplayer.common.ui.recycler_binding_adapter.RecyclerBindingAdapter;
+import com.grenzfrequence.githubdisplayer.common.data.DataPager;
+import com.grenzfrequence.githubdisplayer.common.ui.IRefreshableRecyclerView;
 import com.grenzfrequence.githubdisplayer.di.qualifiers.UiErrMsgQualifier;
 import com.grenzfrequence.githubdisplayer.global.HttpResponses;
 import com.grenzfrequence.githubdisplayer.repolist.data.OwnerModel;
@@ -18,51 +18,64 @@ import com.grenzfrequence.githubdisplayer.repolist.data.RepoApi;
 import com.grenzfrequence.githubdisplayer.repolist.data.RepoModel;
 import com.grenzfrequence.githubdisplayer.utils.ObjectUtils;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
+
+import static com.grenzfrequence.githubdisplayer.utils.RxUtils.dispose;
 
 /**
  * Created by grenzfrequence on 07/03/17.
  */
 
 public class RepoListViewModel
-        extends BaseRecyclerViewModel<
-        IRefreshableView,
-        RecyclerBindingAdapter<RepoModel, RepoListItemViewModel>,
-        String> {
+        extends BaseRecyclerViewModel<IRefreshableRecyclerView<RepoModel>, String> {
 
     private static final String KEY_USER_NAME = "UserName";
 
+    public static final  int    QUERY_FIRST_PAGE     = 1;
+    private static final int    QUERY_ITEMS_PER_PAGE = 12;
+    private static final String QUERY_UPDATED_SORT   = "updated";
+
+    private static final boolean RESET_DATA = true;
+
+    private static final long TIME_AFTER_DATA_ENTRY = 1;
+
     @UiErrMsgQualifier
     private Map<Integer, ErrMsg> errMessages;
+    private DataPager dataPager = null;
 
     private RepoApi repoListApi;
+    private List<RepoModel> repoListItems = new ArrayList<>();
 
     private      String                  userName          = "";
     public final ObservableField<String> avatarUrl         = new ObservableField<>(null);
     public final ObservableBoolean       showList          = new ObservableBoolean(false);
     public final ObservableBoolean       showPlaceholder   = new ObservableBoolean(false);
+    public final ObservableBoolean       showProgressBar   = new ObservableBoolean(false);
     public final ObservableInt           errorMessageId    = new ObservableInt();
     public final ObservableInt           placeHolderIconId = new ObservableInt(R.drawable.ic_info_outline_black);
 
-    private Disposable subscription;
+    private Disposable loaderSubscription = null;
+    private Disposable timerSubscription  = null;
 
     @Inject
     public RepoListViewModel(
             RepoApi repoListApi,
             @UiErrMsgQualifier Map<Integer, ErrMsg> errMessages,
-            RecyclerBindingAdapter<RepoModel, RepoListItemViewModel> adapter) {
-        super(adapter);
+            DataPager dataPager) {
         this.repoListApi = repoListApi;
         this.errMessages = errMessages;
+        this.dataPager = dataPager;
         errorMessageId.set(errMessages.get(HttpResponses.HTTP_CUSTOM_DEFAULT).getErrorMessageId());
     }
 
@@ -73,13 +86,19 @@ public class RepoListViewModel
 
     @Bindable
     public void setUserName(String userName) {
+        dispose(loaderSubscription);
         this.userName = userName;
         if (ObjectUtils.isNullOrEmpty(userName)) {
-            dispose();
             getView().onRefreshed(false);
+            avatarUrl.set(null);
             return;
         }
-        loadData();
+        dispose(timerSubscription);
+        timerSubscription = Observable
+                .timer(TIME_AFTER_DATA_ENTRY, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aLong -> loadData(QUERY_FIRST_PAGE, RESET_DATA));
     }
 
     @Bindable
@@ -108,44 +127,54 @@ public class RepoListViewModel
     @Override
     public void detachView() {
         super.detachView();
-        dispose();
+        dispose(loaderSubscription);
+        dispose(timerSubscription);
+    }
+
+    public boolean isMoreData(int pageNr) {
+        return dataPager.isMoreData(pageNr);
     }
 
     @Override
-    public void loadData() {
-        getView().showRefresh(true);
-
-        dispose();
-        subscription = repoListApi
-                .getRepoList(userName)
-                .map(response -> {
-                    List<RepoModel> repoList = response.body();
-                    Collections.sort(repoList);
-                    return response;
-                })
+    public int loadData(int pageNr, boolean resetData) {
+        dispose(loaderSubscription);
+        if (resetData) {
+            dataPager.reset();
+            getView().onRefresh(true);
+        }
+        if (!dataPager.isMoreData(pageNr)) {
+            return -1;
+        }
+        loaderSubscription = repoListApi
+                .getRepoList(userName, pageNr, QUERY_ITEMS_PER_PAGE, QUERY_UPDATED_SORT)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         repoListItemsResponse -> {
-                            List<RepoModel> repoListItems = repoListItemsResponse.body();
-                            updateUi(repoListItems);
+                            dataPager.updatePager(repoListItemsResponse.headers());
+                            updateUi(repoListItemsResponse.body(), resetData);
                             handleBusinessCaseErrors(
                                     repoListItemsResponse,
                                     !ObjectUtils.isNullOrEmpty(repoListItems));
                         }, throwable -> {
-                            updateUi(null);
+                            updateUi(null, RESET_DATA);
                             getView().onRefreshed(false);
-
                             ErrMsg errMsg = errMessages.get(HttpResponses.HTTP_CUSTOM_DEFAULT);
                             placeHolderIconId.set(errMsg.getErrorIconId());
                             errorMessageId.set(errMsg.getErrorMessageId());
                         }
                 );
+        return 0;
     }
 
-    private void updateUi(List<RepoModel> repoListItems) {
-        getAdapter().setListItems(repoListItems);
-        getAdapter().notifyDataSetChanged();
+    private void updateUi(List<RepoModel> repoListItemsFetched, boolean resetData) {
+        if (resetData) {
+            repoListItems.clear();
+        }
+        if (repoListItemsFetched != null) {
+            repoListItems.addAll(repoListItemsFetched);
+        }
+        getView().setListItems(repoListItems, resetData);
 
         if (ObjectUtils.isNullOrEmpty(repoListItems)) {
             avatarUrl.set(null);
@@ -178,13 +207,6 @@ public class RepoListViewModel
             placeHolderIconId.set(errMsg.getErrorIconId());
         }
         getView().onRefreshed(errMsg == null);
-    }
-
-    private void dispose() {
-        if (subscription != null) {
-            subscription.dispose();
-            subscription = null;
-        }
     }
 
 

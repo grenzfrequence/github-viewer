@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner libraries.junitrunner
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -19,10 +20,6 @@ android {
                     proguard.declarations),
                     proguard.rules
         }
-    }
-
-    defaultConfig {
-        vectorDrawables.useSupportLibrary = true
     }
 
     dataBinding {
@@ -42,9 +39,9 @@ dependencies {
     })
     compile libraries.jodaTime
 
-    compile libraries.appCompat
+//    compile libraries.appCompat
     compile libraries.design
-    compile libraries.recyclerView
+//    compile libraries.recyclerView
     compile libraries.cardView
 
     // Autovalue and extensions

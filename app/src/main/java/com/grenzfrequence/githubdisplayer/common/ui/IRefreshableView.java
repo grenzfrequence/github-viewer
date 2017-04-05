@@ -8,7 +8,7 @@ import com.grenzfrequence.githubdisplayer.base.MvvmView;
 
 public interface IRefreshableView extends MvvmView {
 
-    void showRefresh(boolean show);
+    void onRefresh(boolean show);
 
     void onRefreshed(Boolean success);
 

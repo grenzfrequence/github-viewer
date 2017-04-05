@@ -28,9 +28,8 @@ public class ImageViewAdapters {
         }
         Glide.with(imageView.getContext())
              .load(imageUrl)
-             .placeholder(placeholder)
-             .centerCrop()
              .crossFade()
+             .centerCrop()
              .into(imageView);
     }
 

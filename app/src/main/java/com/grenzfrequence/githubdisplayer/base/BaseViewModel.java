@@ -10,7 +10,7 @@ import android.support.annotation.NonNull;
 public abstract class BaseViewModel<VIEW extends MvvmView, ITEM> extends BaseObservable
         implements MvvmViewModel<VIEW, ITEM> {
 
-    private   VIEW            view;
+    private VIEW view;
 
     @Override
     public void attachView(@NonNull VIEW view) {

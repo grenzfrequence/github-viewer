@@ -8,5 +8,5 @@ import android.databinding.Observable;
 
 public interface ILoaderViewModel<VIEW extends MvvmView, ITEM> extends MvvmViewModel<VIEW, ITEM>, Observable {
 
-    void loadData();
+    int loadData(int pageNr, boolean resetData);
 }

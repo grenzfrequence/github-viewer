@@ -33,6 +33,8 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 @Config(constants = BuildConfig.class)
 public class EndpointMockedTests extends BaseUnitTest {
 
+    private static final int ITEMS_PER_PAGE = 3;
+
     @Rule
     public RuleChain ruleChain = RuleChain
             .emptyRuleChain()
@@ -49,7 +51,8 @@ public class EndpointMockedTests extends BaseUnitTest {
     @UseMockWebServer(setupMethodName = "setupRepoModelListResponse")
     public void repoModelListTest() throws Exception {
         RepoApi         repoListApi = getFragmentComponent().repoListApi();
-        List<RepoModel> list        = repoListApi.getRepoList(userName).blockingSingle().body();
+        List<RepoModel> list        = repoListApi.getRepoList(userName, 1, ITEMS_PER_PAGE, "updated")
+                                                 .blockingSingle().body();
 
         assertThat(list).isNotNull();
         assertThat(list.size()).isEqualTo(3);
